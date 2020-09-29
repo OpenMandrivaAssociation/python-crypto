@@ -1,13 +1,10 @@
 # Share docs between packages for multiple python versions
 %global _docdir_fmt %{name}
 
-# Single python3 version in Fedora, python3_pkgversion macro not available
-%{!?python3_pkgversion:%global python3_pkgversion 3}
-
 Summary:	Cryptography library for Python
 Name:		python-crypto
 Version:	2.6.1
-Release:	30%{?dist}
+Release:	31
 # Mostly Public Domain apart from parts of HMAC.py and setup.py, which are Python
 License:	Public Domain and Python
 URL:		http://www.pycrypto.org/
@@ -22,20 +19,20 @@ Patch6:		pycrypto-2.6.1-use-os-random.patch
 Patch7:		pycrypto-2.6.1-drop-py2.1-support.patch
 BuildRequires:	coreutils
 BuildRequires:	findutils
-BuildRequires:	gmp-devel >= 4.1
-BuildRequires:	tomcrypt-devel >= 1.16
-BuildRequires:	python%{python3_pkgversion}-devel
+BuildRequires:	pkgconfig(gmp)
+BuildRequires:	pkgconfig(libtomcrypt)
+BuildRequires:	pkgconfig(python3)
 BuildRequires:	%{_bindir}/2to3
 
 %description
 PyCrypto is a collection of both secure hash functions (such as MD5 and
 SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
 
-%package -n python%{python3_pkgversion}-crypto
+%package -n python-crypto
 Summary:	Cryptography library for Python 3
-Provides:	python-crypto = %{EVRD}
+%rename python3-crypto
 
-%description -n python%{python3_pkgversion}-crypto
+%description -n python-crypto
 PyCrypto is a collection of both secure hash functions (such as MD5 and
 SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
 
@@ -95,13 +92,13 @@ cp pct-speedtest.py pct-speedtest3.py
 %py3_install
 
 # Remove group write permissions on shared objects
-find %{buildroot}%{python3_sitearch} -name '*.so' -exec chmod -c g-w {} \;
+find %{buildroot}%{python_sitearch} -name '*.so' -exec chmod -c g-w {} \;
 
 # Benchmark
-PYTHONPATH=%{buildroot}%{python3_sitearch} %{__python3} pct-speedtest3.py
+PYTHONPATH=%{buildroot}%{python3_sitearch} python pct-speedtest3.py
 
-%files -n python%{python3_pkgversion}-crypto
+%files -n python-crypto
 %license COPYRIGHT LEGAL/
 %doc README TODO ACKS ChangeLog Doc/
-%{python3_sitearch}/Crypto/
-%{python3_sitearch}/pycrypto-%{version}-py3.*.egg-info
+%{python_sitearch}/Crypto/
+%{python_sitearch}/pycrypto-%{version}-py3.*.egg-info

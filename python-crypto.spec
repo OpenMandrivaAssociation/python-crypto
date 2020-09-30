@@ -23,20 +23,11 @@ BuildRequires:	pkgconfig(gmp)
 BuildRequires:	pkgconfig(libtomcrypt)
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	%{_bindir}/2to3
+%rename python3-crypto
 
 %description
 PyCrypto is a collection of both secure hash functions (such as MD5 and
 SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
-
-%package -n python-crypto
-Summary:	Cryptography library for Python 3
-%rename python3-crypto
-
-%description -n python-crypto
-PyCrypto is a collection of both secure hash functions (such as MD5 and
-SHA), and various encryption algorithms (AES, DES, RSA, ElGamal, etc.).
-
-This is the Python 3 build of the package.
 
 %prep
 %setup -n pycrypto-%{version} -q
@@ -97,7 +88,7 @@ find %{buildroot}%{python_sitearch} -name '*.so' -exec chmod -c g-w {} \;
 # Benchmark
 PYTHONPATH=%{buildroot}%{python3_sitearch} python pct-speedtest3.py
 
-%files -n python-crypto
+%files
 %license COPYRIGHT LEGAL/
 %doc README TODO ACKS ChangeLog Doc/
 %{python_sitearch}/Crypto/

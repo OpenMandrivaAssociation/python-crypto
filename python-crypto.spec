@@ -17,6 +17,7 @@ Patch4:		python-crypto-2.6.1-link.patch
 Patch5:		pycrypto-2.6.1-CVE-2018-6594.patch
 Patch6:		pycrypto-2.6.1-use-os-random.patch
 Patch7:		pycrypto-2.6.1-drop-py2.1-support.patch
+Patch8:   python-crypto-2.6.1-python3.11.patch
 BuildRequires:	coreutils
 BuildRequires:	findutils
 BuildRequires:	pkgconfig(gmp)
@@ -70,6 +71,8 @@ rm -rf src/libtom
 # We already require Python 2.4 or later, so drop support for Python 2.1
 # in the code
 %patch7
+
+%patch8 -p1
 
 # setup.py doesn't run 2to3 on pct-speedtest.py
 cp pct-speedtest.py pct-speedtest3.py

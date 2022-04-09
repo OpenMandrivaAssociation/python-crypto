@@ -72,7 +72,7 @@ rm -rf src/libtom
 # in the code
 %patch7
 
-%patch8 -p1
+%patch8
 
 # setup.py doesn't run 2to3 on pct-speedtest.py
 cp pct-speedtest.py pct-speedtest3.py

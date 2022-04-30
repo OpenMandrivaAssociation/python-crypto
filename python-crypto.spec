@@ -17,12 +17,17 @@ Patch4:		python-crypto-2.6.1-link.patch
 Patch5:		pycrypto-2.6.1-CVE-2018-6594.patch
 Patch6:		pycrypto-2.6.1-use-os-random.patch
 Patch7:		pycrypto-2.6.1-drop-py2.1-support.patch
+Patch8:		python-crypto-2.6.1-python3.10.patch
+Patch9:		python-crypto-2.6.1-python3.11.patch
+Patch10:	python-crypto-2.6.1-python3only.patch
+Patch11:	python-crypto-2.6.1-no-distutils.patch
+Patch12:	python-crypto-2.6.1-SyntaxWarning.patch
 BuildRequires:	coreutils
 BuildRequires:	findutils
 BuildRequires:	pkgconfig(gmp)
 BuildRequires:	pkgconfig(libtomcrypt)
 BuildRequires:	pkgconfig(python3)
-BuildRequires:	%{_bindir}/2to3
+#BuildRequires:	%{_bindir}/2to3
 %rename python3-crypto
 
 %description
@@ -71,9 +76,26 @@ rm -rf src/libtom
 # in the code
 %patch7
 
+# Fix Python 3.10 compatibility
+# https://bugzilla.redhat.com/show_bug.cgi?id=1897544
+%patch8
+	
+# Fix Python 3.11 compatibility
+# https://bugzilla.redhat.com/show_bug.cgi?id=2021808
+%patch9
+	
+# Convert all code to Python 3 before the ability to use 2to3 goes away
+%patch10
+
+# Drop use of deprecated distutils, going away in Python 3.12
+%patch11
+	
+# Get rid of a SyntaxWarning in test_random.py
+%patch12
+
 # setup.py doesn't run 2to3 on pct-speedtest.py
-cp pct-speedtest.py pct-speedtest3.py
-2to3 -wn pct-speedtest3.py
+#cp pct-speedtest.py pct-speedtest3.py
+#2to3 -wn pct-speedtest3.py
 
 %build
 %global optflags %{optflags} -fno-strict-aliasing
@@ -85,11 +107,15 @@ cp pct-speedtest.py pct-speedtest3.py
 # Remove group write permissions on shared objects
 find %{buildroot}%{python_sitearch} -name '*.so' -exec chmod -c g-w {} \;
 
+%check
+%{__python3} setup.py test
+
 # Benchmark
-PYTHONPATH=%{buildroot}%{python3_sitearch} python pct-speedtest3.py
+PYTHONPATH=%{buildroot}%{python3_sitearch} %{__python3} pct-speedtest.py
 
 %files
 %license COPYRIGHT LEGAL/
 %doc README TODO ACKS ChangeLog Doc/
 %{python_sitearch}/Crypto/
 %{python_sitearch}/pycrypto-%{version}-py3.*.egg-info
+

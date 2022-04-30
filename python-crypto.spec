@@ -27,6 +27,7 @@ BuildRequires:	findutils
 BuildRequires:	pkgconfig(gmp)
 BuildRequires:	pkgconfig(libtomcrypt)
 BuildRequires:	pkgconfig(python3)
+BuildRequires:	python3dist(setuptools)
 #BuildRequires:	%{_bindir}/2to3
 %rename python3-crypto
 
